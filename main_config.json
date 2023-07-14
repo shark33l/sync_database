@@ -1,0 +1,36 @@
+{
+  "database_config": {
+    "source": {
+      "host": "127.0.0.1",
+      "port": 3306,
+      "user": "",
+      "password": "",
+      "database": "snipeit",
+      "table": "assets",
+      "join_key": "_snipeit_mac_address_1"
+    },
+    "destination": {
+      "host": "127.0.0.1",
+      "port": 3306,
+      "user": "",
+      "password": "",
+      "database": "DHCP",
+      "table": "hosts",
+      "join_key": "dhcp_identifier",
+      "primary_key": "host_id"
+    },
+    "chunk_size": 1000
+  },
+  "sync_configs": {
+    "column_mappings": {
+        "_snipeit_mac_address_1": "dhcp_identifier",
+        "_snipeit_ip_address_2": "ipv4_address",
+        "_snipeit_hostname_6": "hostname"
+    },
+    "destination": {
+      "custom_constant_mappings": {
+        "dhcp_identifier_type": 0
+      }
+    }
+  }
+}
