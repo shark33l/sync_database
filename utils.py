@@ -4,6 +4,7 @@ import os
 import json
 import socket
 import struct
+import binascii
 
 
 # Create logger with necessary configuration
@@ -54,3 +55,17 @@ def convert_ip2int(ip_address):
 
 def convert_int2ip(ip_address):
     return socket.inet_ntoa(struct.pack("!I", ip_address))
+
+
+# Convert MAC Address to Varbinary (Remove ; and convert to decimal (UNHEX)) and vice versa
+def convert_mac2int(mac_address):
+    return binascii.unhexlify((mac_address.replace(':', '')))
+
+
+def convert_int2mac(mac_address_int):
+    mac_address_str = binascii.hexlify(mac_address_int).decode('ascii')
+
+    # add : after every 2 char
+    mac_address = ':'.join(format(s, '02x') for s in bytes.fromhex(mac_address_str))
+
+    return mac_address

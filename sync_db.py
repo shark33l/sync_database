@@ -66,7 +66,7 @@ if __name__ == '__main__':
     '''
     logger.info(f"Initiating processing/transforming of data from {source_conn.database}.{source_conn.table} and {dest_conn.database}.{dest_conn.table} to identify data that needs to be synced.")
     # Convert byte array to string
-    dest_table_results.dhcp_identifier = dest_table_results.dhcp_identifier.str.decode('utf-8')
+    dest_table_results.dhcp_identifier = dest_table_results.dhcp_identifier.map(lambda mac_address: utils.convert_int2mac(mac_address))
 
     # Convert int IP Address to string like IP Address
     dest_table_results.ipv4_address = dest_table_results.ipv4_address.map(lambda ip_address: utils.convert_int2ip(int(ip_address)))
@@ -98,7 +98,11 @@ if __name__ == '__main__':
         # Populate values that needs to inserted from the source
         for key, value in source_dest_column_mappings.items():
             if value == "ipv4_address":
-                data_to_add_df.loc[:, value] = data_to_add_df.loc[:, key].map(lambda ip_address: utils.convert_ip2int(ip_address))
+                data_to_add_df.loc[:, value] = data_to_add_df.loc[:, key].map(
+                    lambda ip_address: utils.convert_ip2int(ip_address))
+            elif value == "dhcp_identifier":
+                data_to_add_df.loc[:, value] = data_to_add_df.loc[:, key].map(
+                    lambda mac_address: utils.convert_mac2int(mac_address))
             else:
                 data_to_add_df.loc[:, value] = data_to_add_df.loc[:, key]
 
@@ -148,7 +152,11 @@ if __name__ == '__main__':
         # Populate values that needs to be updated from the source
         for key, value in source_dest_column_mappings.items():
             if value == "ipv4_address":
-                data_to_be_updated_df.loc[:, value] = data_to_be_updated_df.loc[:, key].map(lambda ip_address: utils.convert_ip2int(ip_address))
+                data_to_be_updated_df.loc[:, value] = data_to_be_updated_df.loc[:, key].map(
+                    lambda ip_address: utils.convert_ip2int(ip_address))
+            elif value == "dhcp_identifier":
+                data_to_add_df.loc[:, value] = data_to_add_df.loc[:, key].map(
+                    lambda mac_address: utils.convert_mac2int(mac_address))
             else:
                 data_to_be_updated_df.loc[:, value] = data_to_be_updated_df.loc[:, key]
 
