@@ -24,7 +24,8 @@ def create_logger(logger_name):
     file_handler = TimedRotatingFileHandler(
         f'{dir_name}app.log',
         when='midnight',
-        backupCount=14
+        backupCount=14,
+        delay=True
     )
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formatter)
@@ -69,3 +70,32 @@ def convert_int2mac(mac_address_int):
     mac_address = ':'.join(format(s, '02x') for s in bytes.fromhex(mac_address_str))
 
     return mac_address
+
+
+'''
+    Check if IP is in a range and assign the relevant subnet id
+'''
+
+
+# Function, convert IP to tuples to compare easily
+def convert_ip2tuples(ip_address:str):
+    return tuple(int(n) for n in ip_address.split('.'))
+
+
+# Identify if IP in range and return TRUE or FALSE
+def check_ipv4_range(ip_address: str, start_ip: str, end_ip: str):
+    return convert_ip2tuples(start_ip) < convert_ip2tuples(ip_address) < convert_ip2tuples(end_ip)
+
+
+# Assign relevant Subnet ID to IP
+def assign_subnet_id(ip_address, subnet_mapping):
+    """
+    :param ip_address: string
+    :param subnet_mapping: [{"to": "<ip_address>", "from": "<ip_address>", "id": int}]
+    :return: id: int | None
+    """
+    for subnet_object in subnet_mapping:
+        if check_ipv4_range(ip_address=ip_address, start_ip=subnet_object["from"], end_ip=subnet_object["to"]):
+            return subnet_object["id"]
+
+    return None

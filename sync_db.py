@@ -11,6 +11,10 @@ database_configs = main_config.get("database_config")
 # sync configs
 sync_configs = main_config.get("sync_configs")
 
+# Subnet Mapping configs
+subnet_id_col = sync_configs.get("destination")["subnet_id_col"]
+subnet_id_mapping = sync_configs.get("destination")["custom_subnet_id_mapping"]
+
 if __name__ == '__main__':
 
     '''
@@ -110,6 +114,15 @@ if __name__ == '__main__':
         # Add constant values
         for key, value in sync_configs.get("destination")["custom_constant_mappings"].items():
             data_to_add_df.loc[:, key] = value
+
+        # Populate subnet ids for the IP address
+        # Get source ip_address mapping column and populare
+        for key, value in source_dest_column_mappings.items():
+            if value == "ipv4_address":
+                data_to_add_df.loc[:, subnet_id_col] = data_to_add_df.loc[:, key].map(
+                    lambda ip_address: utils.assign_subnet_id(ip_address=ip_address, subnet_mapping=subnet_id_mapping)
+                )
+                break
 
         # Drop Columns that's not related to the Destination DB Table
         data_to_add_df = data_to_add_df.drop(source_table_results.columns.to_list(), axis=1, inplace=False)

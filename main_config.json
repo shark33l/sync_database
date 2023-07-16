@@ -30,7 +30,30 @@
     "destination": {
       "custom_constant_mappings": {
         "dhcp_identifier_type": 0
-      }
+      },
+      "subnet_id_col": "dhcp4_subnet_id",
+      "custom_subnet_id_mapping": [
+        {
+          "id": 0,
+          "from": "0.0.0.0",
+          "to": "10.255.255.255"
+        },
+        {
+          "id": 1,
+          "from": "11.0.0.0",
+          "to": "129.255.255.255"
+        },
+        {
+          "id": 2,
+          "from": "130.0.0.0",
+          "to": "179.255.255.255"
+        },
+        {
+          "id": 3,
+          "from": "180.0.0.0",
+          "to": "255.255.255.255"
+        }
+      ]
     }
   }
 }
