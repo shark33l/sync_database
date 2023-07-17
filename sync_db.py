@@ -69,13 +69,22 @@ if __name__ == '__main__':
     Process and reformat data
     '''
     logger.info(f"Initiating processing/transforming of data from {source_conn.database}.{source_conn.table} and {dest_conn.database}.{dest_conn.table} to identify data that needs to be synced.")
+    source_dest_column_mappings = sync_configs.get("column_mappings")
+
+    # Make MAC case insensitive
+    for key, value in source_dest_column_mappings.items():
+        if value == "dhcp_identifier":
+            source_table_results.loc[:, key] = source_table_results.loc[:, key].map(
+                lambda mac_address: mac_address.lower() if isinstance(mac_address, str) else mac_address)
+            break
     # Convert byte array to string
-    dest_table_results.dhcp_identifier = dest_table_results.dhcp_identifier.map(lambda mac_address: utils.convert_int2mac(mac_address))
+    dest_table_results.dhcp_identifier = dest_table_results.dhcp_identifier.map(
+        lambda mac_address: utils.convert_int2mac(mac_address))
 
     # Convert int IP Address to string like IP Address
-    dest_table_results.ipv4_address = dest_table_results.ipv4_address.map(lambda ip_address: utils.convert_int2ip(int(ip_address)))
+    dest_table_results.ipv4_address = dest_table_results.ipv4_address.map(
+        lambda ip_address: utils.convert_int2ip(int(ip_address)))
 
-    source_dest_column_mappings = sync_configs.get("column_mappings")
 
     '''
         identify data that needs to be added/updated/removed to the Destination DB Table
@@ -203,7 +212,7 @@ if __name__ == '__main__':
         Delete data that no longer exists on source DB table
     '''
     # Data that needs to be removed
-    data_to_remove_df = joined_df.query('_snipeit_mac_address_1.isnull()', inplace=False)
+    data_to_remove_df = joined_df.query('_snipeit_mac_address_1.isnull() | deleted_at.notnull()', inplace=False)
 
     # Check if there's data to be deleted, if so delete from destination
     if data_to_remove_df.shape[0] > 0:
