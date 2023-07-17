@@ -84,7 +84,7 @@ def convert_ip2tuples(ip_address:str):
 
 # Identify if IP in range and return TRUE or FALSE
 def check_ipv4_range(ip_address: str, start_ip: str, end_ip: str):
-    return convert_ip2tuples(start_ip) < convert_ip2tuples(ip_address) < convert_ip2tuples(end_ip)
+    return convert_ip2tuples(start_ip) <= convert_ip2tuples(ip_address) <= convert_ip2tuples(end_ip)
 
 
 # Assign relevant Subnet ID to IP
